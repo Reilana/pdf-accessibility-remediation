@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark light">
+    <title>PDF Accessibility Remediation Case Study | Allison Clark</title>
+    <meta name="description" content="Case study: remediating a section of a Kansas state public health report for PDF accessibility, validated against PDF/UA with PAC and verified by screen reader.">
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bg:           'var(--c-bg)',
+                        'bg-card':    'var(--c-bg-card)',
+                        text:         'var(--c-text)',
+                        muted:        'var(--c-muted)',
+                        border:       'var(--c-border)',
+                        link:         'var(--c-link)',
+                        'link-hover': 'var(--c-link-hover)',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../../css/custom.css">
+    <style>
+        .case-study h2 { font-size: 1.5rem; font-weight: 700; margin: 2.5rem 0 1rem; }
+        .case-study h2:first-of-type { margin-top: 0; }
+        .case-study h3 { font-size: 1.1rem; font-weight: 700; margin: 1.75rem 0 0.75rem; }
+        .case-study p { margin-bottom: 1rem; color: var(--c-muted); }
+        .case-study ul { list-style: disc; padding-left: 1.5rem; color: var(--c-muted); margin-bottom: 1rem; }
+        .case-study li { margin-bottom: 0.5rem; }
+        .case-study table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem; }
+        .case-study th, .case-study td { border: 1px solid var(--c-border); padding: 0.6rem 0.75rem; text-align: left; }
+        .case-study th { background-color: var(--c-bg-card); font-weight: 700; }
+    </style>
+</head>
+<body class="bg-bg text-text">
+
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-nav" role="banner">
+        <div class="container">
+            <div class="nav-inner">
+                <a class="nav-brand" href="../../index.html" aria-label="Allison Clark, back to portfolio">
+                    Allison Clark
+                </a>
+                <nav aria-label="Breadcrumb" class="ml-auto">
+                    <a class="nav-link" href="../../index.html#portfolio">&larr; Back to Portfolio</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content" tabindex="-1">
+        <div class="container content-section case-study">
+
+            <p class="section-label">Case Study</p>
+            <h1 class="text-3xl font-bold mb-2">PDF Accessibility Remediation Case Study</h1>
+            <p class="text-muted mb-8">Remediating a section of a Kansas public health surveillance report</p>
+
+            <h2>Overview</h2>
+            <p>
+                I remediated a representative three-page section of the Kansas Pregnancy Risk Assessment
+                Monitoring System (PRAMS) 2022 Surveillance Report, a real public health document published
+                by a state agency. The source file failed accessibility validation across hundreds of
+                checkpoints. My goal was to take a representative sample to a clean Adobe Acrobat
+                accessibility check, then validate the result against the stricter
+                <abbr title="Portable Document Format/Universal Accessibility">PDF/UA</abbr> standard using
+                PAC, and document honestly what could and could not be resolved through document-level
+                remediation. I worked almost entirely by keyboard and screen reader, which shaped several of
+                the choices below.
+            </p>
+
+            <h2>Source document and scope</h2>
+            <p>
+                The full report is 104 pages and is dense with statistical tables and charts. A full PAC scan
+                of the source returned 260 structure element failures and 417 alternative description
+                warnings, among others. Remediating all 104 pages was not the right use of effort for a
+                portfolio sample, and scoping a representative section is standard practice for remediation
+                work. I selected three pages chosen for variety, so the sample would demonstrate different
+                skills rather than repeat one:
+            </p>
+            <ul>
+                <li><strong>Introduction page:</strong> prose and heading structure.</li>
+                <li><strong>Gestational Diabetes page:</strong> a data table with grouped row categories, plus a two-column layout that tests reading order.</li>
+                <li><strong>Figures page:</strong> two statistical charts that require meaningful alternative text.</li>
+            </ul>
+
+            <h2>Tools</h2>
+            <ul>
+                <li>Adobe Acrobat Pro, for tagging, the Tags panel, and the built-in accessibility check.</li>
+                <li>PAC 2024 (PDF Accessibility Checker), for <abbr title="Portable Document Format/Universal Accessibility">PDF/UA</abbr> conformance validation.</li>
+                <li>NVDA, for screen reader verification of reading order and alternative text.</li>
+            </ul>
+
+            <h2>What I did</h2>
+
+            <h3>Baseline and automated first pass</h3>
+            <p>
+                I set the document language and a real title, then ran Acrobat's Autotag to generate an
+                initial structure. Autotag took the sample from 15 accessibility failures to 4, building the
+                table, list, and content tags. As expected, it left the judgment-dependent work for me.
+            </p>
+
+            <h3>Chart alternative text, authored from the data</h3>
+            <p>
+                The two charts are drawn as vector graphics, not images, so I could not rely on a visual
+                read. I authored their alternative text from the underlying values in Table 1, which is the
+                correct method when a chart cannot be seen. Because the full data set already exists in an
+                adjacent accessible table, I wrote the alternative text to convey the trend and the key
+                disparities rather than restate every value, and I pointed the reader to the table for the
+                complete figures. Duplicating all nineteen values in an alternative text string would be
+                harder for a screen reader user to navigate, not easier.
+            </p>
+
+            <h3>Correcting Autotag's mistakes</h3>
+            <ul>
+                <li><strong>Decorative divider:</strong> Autotag tagged a thin decorative rule as a figure. I re-tagged it as an artifact so assistive technology ignores it.</li>
+                <li><strong>False headings:</strong> Autotag promoted bold lines, including the table caption, to headings, which broke the heading sequence. I demoted them to paragraphs, leaving a clean hierarchy.</li>
+                <li><strong>Broken link:</strong> I found and removed a link annotation that pointed to no destination, a defect that affects every user.</li>
+            </ul>
+
+            <h3>Result of the Acrobat pass</h3>
+            <p>
+                After this work, Acrobat's accessibility check reported no problems. Every machine-checkable
+                rule passed, with reading order and color contrast remaining as the expected manual checks.
+            </p>
+
+            <h2>Before and after</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Checkpoint group</th>
+                        <th scope="col">Source (104 pp)</th>
+                        <th scope="col">Extract before</th>
+                        <th scope="col">Extract after</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Tagged PDF status</td>
+                        <td>Failing</td>
+                        <td>Untagged</td>
+                        <td>Tagged, passed</td>
+                    </tr>
+                    <tr>
+                        <td>Acrobat failures</td>
+                        <td>Not run</td>
+                        <td>15</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>Figure alt text</td>
+                        <td>417 warnings</td>
+                        <td>Missing</td>
+                        <td>Authored</td>
+                    </tr>
+                    <tr>
+                        <td>Headings</td>
+                        <td>Inconsistent</td>
+                        <td>Skipped levels</td>
+                        <td>Clean nesting</td>
+                    </tr>
+                    <tr>
+                        <td>Tables</td>
+                        <td>Many failures</td>
+                        <td>Untagged</td>
+                        <td>Headers + scope set</td>
+                    </tr>
+                    <tr>
+                        <td>Broken links</td>
+                        <td>Present</td>
+                        <td>1 (empty)</td>
+                        <td>Removed</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Validation: why I did not stop at Acrobat</h2>
+            <p>
+                A clean Acrobat report does not mean a document conforms to
+                <abbr title="Portable Document Format/Universal Accessibility">PDF/UA</abbr>. To confirm, I
+                validated the finished file in PAC, which applies the Matterhorn Protocol and is considerably
+                stricter. PAC returned remaining failures in three areas: fonts (7), structure elements (18),
+                and role mapping (3), plus one metadata item. Catching this gap is the point. A remediator
+                who trusts Acrobat alone will ship files that are not actually conformant.
+            </p>
+
+            <h2>Known limitations and professional judgment</h2>
+            <p>
+                Not every issue can be resolved through document-level remediation, and treating the
+                remaining items honestly matters more than forcing a perfect score.
+            </p>
+            <ul>
+                <li>
+                    <strong>Fonts (source level):</strong> the font failures are embedding and character
+                    mapping problems baked into how the original PDF was generated. They were present in
+                    the source before I began. Resolving them requires regenerating the file from an
+                    accessible source, which is outside document remediation.
+                </li>
+                <li>
+                    <strong>Role mapping:</strong> the three role mapping items correspond to custom tag
+                    types Acrobat's Autotag introduced. They are mapped to standard types, and the
+                    structure they describe is sound.
+                </li>
+                <li>
+                    <strong>Structure elements:</strong> these are
+                    <abbr title="Portable Document Format/Universal Accessibility">PDF/UA</abbr>
+                    technicalities. I verified directly that the fundamentals are correct: links wrap their
+                    object references, figures carry alternative text and bounding boxes, footnotes have
+                    unique identifiers, and tables are properly nested with header cells.
+                </li>
+                <li>
+                    <strong><abbr title="Portable Document Format/Universal Accessibility">PDF/UA</abbr>
+                    identifier, withheld on purpose:</strong> the single metadata failure is the missing
+                    <abbr title="Portable Document Format/Universal Accessibility">PDF/UA</abbr> identifier.
+                    I chose not to add it, because the file does not yet fully conform. Stamping a
+                    conformance claim onto a non-conformant file would be improper. The identifier belongs
+                    on a file only once it genuinely conforms.
+                </li>
+            </ul>
+
+            <h2>Tool accessibility barriers</h2>
+            <p>
+                I completed this work as a screen reader user, and I ran into real accessibility barriers in
+                the remediation tools themselves. These are worth documenting, because they affect any
+                practitioner who relies on assistive technology, and because remediation tools that are not
+                themselves accessible are a problem the field should name.
+            </p>
+            <ul>
+                <li>
+                    <strong>Adobe Acrobat Preflight:</strong> when I tried to add the
+                    <abbr title="Portable Document Format/Universal Accessibility">PDF/UA</abbr> identifier
+                    through Preflight, my screen reader announced almost nothing as I moved through the
+                    dialog by keyboard, only a generic control and a single edit field. The fixups list and
+                    the action buttons were not reachable, so the dialog could not be operated without
+                    sight.
+                </li>
+                <li>
+                    <strong>PAC detailed results:</strong> PAC exports only its summary report. The specific
+                    checkpoint failures exist only inside PAC's interactive interface, which does not
+                    navigate cleanly with a screen reader. I could not reach the detailed failures I needed
+                    to target individual structure fixes, which limited how far the remaining items could be
+                    diagnosed.
+                </li>
+                <li>
+                    <strong>Locating a small link annotation:</strong> the broken link was roughly eight
+                    points wide, which is not practical to find visually. I removed it by entering link
+                    editing mode and using Select All to target it without relying on sight, rather than
+                    hunting for the box on screen.
+                </li>
+            </ul>
+
+            <h2>Reading order, verified by screen reader</h2>
+            <p>
+                Automated checkers cannot confirm that content reads in a sensible order, so I verified the
+                sample by ear in NVDA. This testing surfaced a problem the automated check had passed: only
+                one section title was tagged as a heading. The second section heading had been lost during
+                cleanup, yet Acrobat's nesting check still passed, because a single heading with no skipped
+                levels is technically valid even though it leaves a section unnavigable. I re-tagged the
+                section title as a heading so that heading navigation works the way a screen reader user
+                expects. With that corrected, I confirmed the rest by screen reader. Heading navigation moves
+                cleanly between the two sections. The data table reads and cycles in a logical order,
+                including the two-column layout where narrative sits beside the table. Both charts announce
+                the alternative text I authored, conveying the prevalence values and trends rather than a
+                bare label. This is the kind of verification that automated tools cannot provide, and it is
+                where lived assistive technology experience adds direct value.
+            </p>
+
+            <h2>What this demonstrates</h2>
+            <ul>
+                <li>Scoping a large, complex document into a representative sample, the way remediation work is actually triaged.</li>
+                <li>Authoring meaningful chart alternative text from underlying data, including the judgment to summarize rather than duplicate an accessible table.</li>
+                <li>Correcting automated tagging errors: artifacts, heading structure, and a broken link.</li>
+                <li>Validating against <abbr title="Portable Document Format/Universal Accessibility">PDF/UA</abbr> with PAC, not just Acrobat, and understanding the difference.</li>
+                <li>Screen reader testing that caught a navigation failure the automated check passed, then correcting it.</li>
+                <li>Distinguishing what document remediation can fix from source-level limitations, and declining to assert conformance that does not exist.</li>
+            </ul>
+
+            <div class="flex flex-wrap gap-3 mt-10">
+                <a href="PRAMS_Remediation_Case_Study.docx"
+                   class="btn-primary"
+                   download>
+                    Download Write-Up (.docx)
+                    <span class="sr-only">, PDF remediation case study Word document</span>
+                </a>
+                <a href="PRAMS_remediation_sample_3pages.pdf"
+                   class="btn-secondary"
+                   target="_blank" rel="noopener noreferrer">
+                    View Remediated PDF
+                    <span class="sr-only">, PRAMS report sample (opens in new tab)</span>
+                </a>
+                <a href="PRAMS_PAC_UA_Report.pdf"
+                   class="btn-secondary"
+                   target="_blank" rel="noopener noreferrer">
+                    View PAC Validation Report
+                    <span class="sr-only">, PDF/UA accessibility validation report (opens in new tab)</span>
+                </a>
+                <a href="../../index.html#portfolio" class="btn-secondary">
+                    &larr; Back to Portfolio
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer role="contentinfo">
+        <div class="container">
+            <p class="text-muted text-sm">
+                &copy; 2026 Allison Clark |
+                <a href="https://allie.me" class="underline">allie.me</a>
+                | All Rights Reserved.
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>
