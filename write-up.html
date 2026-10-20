@@ -7,24 +7,6 @@
     <title>PDF Accessibility Remediation Case Study | Allison Clark</title>
     <meta name="description" content="Case study: remediating a section of a Kansas state public health report for PDF accessibility, validated against PDF/UA with PAC and verified by screen reader.">
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        bg:           'var(--c-bg)',
-                        'bg-card':    'var(--c-bg-card)',
-                        text:         'var(--c-text)',
-                        muted:        'var(--c-muted)',
-                        border:       'var(--c-border)',
-                        link:         'var(--c-link)',
-                        'link-hover': 'var(--c-link-hover)',
-                    }
-                }
-            }
-        }
-    </script>
     <link rel="stylesheet" href="../../css/custom.css">
     <style>
         .case-study h2 { font-size: 1.5rem; font-weight: 700; margin: 2.5rem 0 1rem; }
@@ -36,7 +18,14 @@
         .case-study table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem; }
         .case-study th, .case-study td { border: 1px solid var(--c-border); padding: 0.6rem 0.75rem; text-align: left; }
         .case-study th { background-color: var(--c-bg-card); font-weight: 700; }
+        /* On narrow screens only the table scrolls sideways, not the whole page */
+        .case-study .table-scroll { overflow-x: auto; margin: 1.5rem 0; }
+        .case-study .table-scroll table { margin: 0; }
     </style>
+    <!-- Tailwind CSS, compiled by "npm run build:css" (see tailwind.config.js).
+         Keep it last in <head>: it has to load after custom.css and any <style>
+         block, the same order the old CDN script used, so the pages look the same. -->
+    <link rel="stylesheet" href="../../css/tailwind.css">
 </head>
 <body class="bg-bg text-text">
 
@@ -74,6 +63,12 @@
                 remediation. I worked almost entirely by keyboard and screen reader, which shaped several of
                 the choices below.
             </p>
+            <p>
+                This write-up covers two rounds. The first reached a clean Acrobat check. The second came
+                after I had the published file audited at the tag level and found problems that both
+                Acrobat and my first screen reader pass had missed. I corrected them, and I describe both
+                rounds because the second one changed what I would claim about the first.
+            </p>
 
             <h2>Source document and scope</h2>
             <p>
@@ -93,8 +88,9 @@
             <h2>Tools</h2>
             <ul>
                 <li>Adobe Acrobat Pro, for tagging, the Tags panel, and the built-in accessibility check.</li>
-                <li>PAC 2024 (PDF Accessibility Checker), for <abbr title="Portable Document Format/Universal Accessibility">PDF/UA</abbr> conformance validation.</li>
+                <li>PAC 2026 (PDF Accessibility Checker, version 26.1), for <abbr title="Portable Document Format/Universal Accessibility">PDF/UA</abbr> conformance validation.</li>
                 <li>NVDA, for screen reader verification of reading order and alternative text.</li>
+                <li>pikepdf and qpdf, command-line PDF libraries used for the second-round tag repairs. Claude, an AI assistant, wrote and ran those scripts at my direction. I ran Acrobat and PAC myself and reviewed the results.</li>
             </ul>
 
             <h2>What I did</h2>
@@ -130,7 +126,31 @@
                 rule passed, with reading order and color contrast remaining as the expected manual checks.
             </p>
 
+            <h3>Second pass: auditing the tag structure</h3>
+            <p>
+                After the sample was published, I had the file's tag tree inspected directly, rather than
+                relying on checker summaries. That found several defects that no automated check reports.
+            </p>
+            <ul>
+                <li><strong>Table 1 was not one table.</strong> It was split into two tables. Several data rows were tagged as figures carrying the chart alternative text, and the birth-year rows were tagged as artifacts, so a screen reader skipped or mislabeled them. I rebuilt it as a single table with a caption, one header row with column scope, row headers with row scope, and group rows that span all three columns.</li>
+                <li><strong>Confidence intervals read as negative numbers.</strong> The source text has no space after the hyphen, so a range like 4.2 to 7.1 could be announced as "4.2 minus 7.1". I added reading text so each range is announced as "4.2 to 7.1".</li>
+                <li><strong>The real charts were hidden.</strong> Both charts were tagged as artifacts, while the alternative text sat on the table rows. I tagged each chart as a figure with its alternative text, and corrected the first one, which called a line chart a bar chart.</li>
+                <li><strong>Hidden numbers.</strong> The weighted percents for the 2017 to 2022 rows were in the file, but a later shading box painted over them, so sighted readers saw blank cells while screen readers read the values. I redrew them on top.</li>
+                <li><strong>Housekeeping.</strong> Page numbers became artifacts. Seven empty form fields were removed. Duplicate and orphaned link annotations were removed, and the remaining links got descriptive contents. The footnotes were flattened from Note tags into their paragraphs. The root tag changed from Part to Document, and I added bookmarks from the headings.</li>
+                <li><strong>Fonts.</strong> Arial and Times-Roman were not embedded. I embedded Liberation Sans and Liberation Serif, open-license fonts with the same character widths, so the layout did not change. The letter shapes differ slightly from Arial.</li>
+                <li><strong>The identifier, last.</strong> Only after the structure was repaired did I add the <abbr title="Portable Document Format/Universal Accessibility">PDF/UA</abbr> identifier to the file's metadata.</li>
+            </ul>
+
+            <h3>Result of the second pass</h3>
+            <p>
+                Acrobat's check again reported no problems, with 28 rules passed and reading order and
+                color contrast left as manual checks. PAC's report on the final file says the PDF/UA
+                requirements it checks are fulfilled, with no failures and no warnings in any checkpoint. The
+                report is linked below.
+            </p>
+
             <h2>Before and after</h2>
+            <div class="table-scroll" tabindex="0" role="region" aria-label="Before and after table (scrolls sideways on small screens)">
             <table>
                 <thead>
                     <tr>
@@ -142,52 +162,67 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Tagged PDF status</td>
+                        <th scope="row">Tagged PDF status</th>
                         <td>Failing</td>
                         <td>Untagged</td>
                         <td>Tagged, passed</td>
                     </tr>
                     <tr>
-                        <td>Acrobat failures</td>
+                        <th scope="row">Acrobat failures</th>
                         <td>Not run</td>
                         <td>15</td>
                         <td>0</td>
                     </tr>
                     <tr>
-                        <td>Figure alt text</td>
+                        <th scope="row">Figure alt text</th>
                         <td>417 warnings</td>
                         <td>Missing</td>
                         <td>Authored</td>
                     </tr>
                     <tr>
-                        <td>Headings</td>
+                        <th scope="row">Headings</th>
                         <td>Inconsistent</td>
                         <td>Skipped levels</td>
                         <td>Clean nesting</td>
                     </tr>
                     <tr>
-                        <td>Tables</td>
+                        <th scope="row">Tables</th>
                         <td>Many failures</td>
                         <td>Untagged</td>
-                        <td>Headers + scope set</td>
+                        <td>One table, headers with scope</td>
                     </tr>
                     <tr>
-                        <td>Broken links</td>
+                        <th scope="row">PAC failed checkpoints</th>
+                        <td>Hundreds</td>
+                        <td>29</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Fonts</th>
+                        <td>Not reported</td>
+                        <td>Not embedded</td>
+                        <td>Embedded</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Broken links</th>
                         <td>Present</td>
                         <td>1 (empty)</td>
                         <td>Removed</td>
                     </tr>
                 </tbody>
             </table>
+            </div>
 
             <h2>Validation: why I did not stop at Acrobat</h2>
             <p>
                 A clean Acrobat report does not mean a document conforms to
                 <abbr title="Portable Document Format/Universal Accessibility">PDF/UA</abbr>. To confirm, I
                 validated the finished file in PAC, which applies the Matterhorn Protocol and is considerably
-                stricter. PAC returned remaining failures in three areas: fonts (7), structure elements (18),
+                stricter. PAC returned failures in three areas: fonts (7), structure elements (18),
                 and role mapping (3), plus one metadata item. Catching this gap is the point. A remediator
-                who trusts Acrobat alone will ship files that are not actually conformant.
+                who trusts Acrobat alone will ship files that are not actually conformant. The second pass
+                went one step further: PAC and Acrobat both count tags, but neither checks that the right
+                content is inside them, so I also inspected the tag tree directly.
             </p>
 
             <h2>Known limitations and professional judgment</h2>
@@ -197,30 +232,32 @@
             </p>
             <ul>
                 <li>
-                    <strong>Fonts (source level):</strong> the font failures are embedding and character
-                    mapping problems baked into how the original PDF was generated. They were present in
-                    the source before I began. Resolving them requires regenerating the file from an
-                    accessible source, which is outside document remediation.
+                    <strong>Fonts are substitutes:</strong> the original fonts were not embedded, and I did
+                    not have the licensed Arial files to embed. Liberation Sans and Liberation Serif have the
+                    same character widths, so the layout and text are unchanged, but the letter shapes
+                    differ slightly from Arial. Regenerating the file from the source with Arial embedded
+                    would remove that difference.
                 </li>
                 <li>
-                    <strong>Role mapping:</strong> the three role mapping items correspond to custom tag
-                    types Acrobat's Autotag introduced. They are mapped to standard types, and the
-                    structure they describe is sound.
+                    <strong>Missing values in Table 1:</strong> the two WIC rows have no weighted percent
+                    in the table, while Figure 2 labels them 9.4% and 9.6%. I left the table as published
+                    and flagged the gap, because I cannot confirm those values against the source report.
                 </li>
                 <li>
-                    <strong>Structure elements:</strong> these are
-                    <abbr title="Portable Document Format/Universal Accessibility">PDF/UA</abbr>
-                    technicalities. I verified directly that the fundamentals are correct: links wrap their
-                    object references, figures carry alternative text and bounding boxes, footnotes have
-                    unique identifiers, and tables are properly nested with header cells.
+                    <strong>Manual checks remain manual:</strong> Acrobat cannot judge reading order or the
+                    color contrast of chart graphics, so those depend on the screen reader pass and a visual
+                    check.
                 </li>
                 <li>
-                    <strong><abbr title="Portable Document Format/Universal Accessibility">PDF/UA</abbr>
-                    identifier, withheld on purpose:</strong> the single metadata failure is the missing
-                    <abbr title="Portable Document Format/Universal Accessibility">PDF/UA</abbr> identifier.
-                    I chose not to add it, because the file does not yet fully conform. Stamping a
-                    conformance claim onto a non-conformant file would be improper. The identifier belongs
-                    on a file only once it genuinely conforms.
+                    <strong>Role mapping and structure elements:</strong> the failures PAC reported in the
+                    first round came from custom tag types and from content tagged as the wrong element. They
+                    were resolved in the second pass.
+                </li>
+                <li>
+                    <strong><abbr title="Portable Document Format/Universal Accessibility">PDF/UA</abbr> identifier, added last:</strong> I withheld the identifier in the first
+                    round because the file did not yet conform, and stamping a conformance claim onto a
+                    non-conformant file would be improper. I added it only after the structure was repaired
+                    and the file had been validated in PAC.
                 </li>
             </ul>
 
@@ -243,9 +280,10 @@
                 <li>
                     <strong>PAC detailed results:</strong> PAC exports only its summary report. The specific
                     checkpoint failures exist only inside PAC's interactive interface, which does not
-                    navigate cleanly with a screen reader. I could not reach the detailed failures I needed
-                    to target individual structure fixes, which limited how far the remaining items could be
-                    diagnosed.
+                    navigate cleanly with a screen reader. In the first round I could not reach the
+                    detailed failures I needed to target individual structure fixes. In the second round I
+                    had Claude open the detailed results on my computer, read each warning, and save them to
+                    a text file, which is how I learned about the root tag and bookmark issues.
                 </li>
                 <li>
                     <strong>Locating a small link annotation:</strong> the broken link was roughly eight
@@ -270,6 +308,15 @@
                 bare label. This is the kind of verification that automated tools cannot provide, and it is
                 where lived assistive technology experience adds direct value.
             </p>
+            <p>
+                The second pass showed the limits of that test. The charts announced their alternative text
+                in the first round, but the text was attached to table rows, not to the charts, and neither
+                my ear nor the checkers could tell the difference. Listening and inspecting the tag tree
+                catch different problems, and a sound remediation needs both.
+            </p>
+            <p>
+                I repeated the screen reader pass on the final file before publishing it.
+            </p>
 
             <h2>What this demonstrates</h2>
             <ul>
@@ -278,7 +325,8 @@
                 <li>Correcting automated tagging errors: artifacts, heading structure, and a broken link.</li>
                 <li>Validating against <abbr title="Portable Document Format/Universal Accessibility">PDF/UA</abbr> with PAC, not just Acrobat, and understanding the difference.</li>
                 <li>Screen reader testing that caught a navigation failure the automated check passed, then correcting it.</li>
-                <li>Distinguishing what document remediation can fix from source-level limitations, and declining to assert conformance that does not exist.</li>
+                <li>Auditing my own published work at the tag level, finding defects the checkers and my first screen reader pass missed, and correcting them in the open.</li>
+                <li>Distinguishing what document remediation can fix from source-level limitations, and declining to assert conformance until it was earned.</li>
             </ul>
 
             <div class="flex flex-wrap gap-3 mt-10">
