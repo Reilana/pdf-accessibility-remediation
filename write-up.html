@@ -7,7 +7,7 @@
     <title>PDF Accessibility Remediation Case Study | Allison Clark</title>
     <meta name="description" content="Case study: remediating a section of a Kansas state public health report for PDF accessibility, validated against PDF/UA with PAC and verified by screen reader.">
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
-    <link rel="stylesheet" href="../../css/custom.css">
+    <link rel="stylesheet" href="../../css/custom.css?v=202610202320">
     <style>
         .case-study h2 { font-size: 1.5rem; font-weight: 700; margin: 2.5rem 0 1rem; }
         .case-study h2:first-of-type { margin-top: 0; }
@@ -25,7 +25,7 @@
     <!-- Tailwind CSS, compiled by "npm run build:css" (see tailwind.config.js).
          Keep it last in <head>: it has to load after custom.css and any <style>
          block, the same order the old CDN script used, so the pages look the same. -->
-    <link rel="stylesheet" href="../../css/tailwind.css">
+    <link rel="stylesheet" href="../../css/tailwind.css?v=202610202320">
 </head>
 <body class="bg-bg text-text">
 
@@ -34,11 +34,11 @@
     <header class="site-nav" role="banner">
         <div class="container">
             <div class="nav-inner">
-                <a class="nav-brand" href="../../index.html" aria-label="Allison Clark, back to portfolio">
+                <a class="nav-brand" href="../../" aria-label="Allison Clark, back to portfolio">
                     Allison Clark
                 </a>
                 <nav aria-label="Breadcrumb" class="ml-auto">
-                    <a class="nav-link" href="../../index.html#portfolio">&larr; Back to Portfolio</a>
+                    <a class="nav-link" href="../../#portfolio">&larr; Back to Portfolio</a>
                 </nav>
             </div>
         </div>
@@ -137,7 +137,7 @@
                 <li><strong>The real charts were hidden.</strong> Both charts were tagged as artifacts, while the alternative text sat on the table rows. I tagged each chart as a figure with its alternative text, and corrected the first one, which called a line chart a bar chart.</li>
                 <li><strong>Hidden numbers.</strong> The weighted percents for the 2017 to 2022 rows were in the file, but a later shading box painted over them, so sighted readers saw blank cells while screen readers read the values. I redrew them on top.</li>
                 <li><strong>Housekeeping.</strong> Page numbers became artifacts. Seven empty form fields were removed. Duplicate and orphaned link annotations were removed, and the remaining links got descriptive contents. The footnotes were flattened from Note tags into their paragraphs. The root tag changed from Part to Document, and I added bookmarks from the headings.</li>
-                <li><strong>Fonts.</strong> Arial and Times-Roman were not embedded. I embedded Liberation Sans and Liberation Serif, open-license fonts with the same character widths, so the layout did not change. The letter shapes differ slightly from Arial.</li>
+                <li><strong>Fonts.</strong> The body text fonts, Arial and Times-Roman, were not embedded. (The chart labels already carried an embedded Arial subset, which I left as it was.) I embedded Liberation Sans and Liberation Serif, open-license fonts with the same character widths, so the layout did not change. The letter shapes differ slightly from Arial.</li>
                 <li><strong>The identifier, last.</strong> Only after the structure was repaired did I add the <abbr title="Portable Document Format/Universal Accessibility">PDF/UA</abbr> identifier to the file's metadata.</li>
             </ul>
 
@@ -194,7 +194,7 @@
                     <tr>
                         <th scope="row">PAC failed checkpoints</th>
                         <td>Hundreds</td>
-                        <td>29</td>
+                        <td>29 (after first pass)</td>
                         <td>0</td>
                     </tr>
                     <tr>
@@ -232,7 +232,7 @@
             </p>
             <ul>
                 <li>
-                    <strong>Fonts are substitutes:</strong> the original fonts were not embedded, and I did
+                    <strong>Fonts are substitutes:</strong> the original body text fonts were not embedded, and I did
                     not have the licensed Arial files to embed. Liberation Sans and Liberation Serif have the
                     same character widths, so the layout and text are unchanged, but the letter shapes
                     differ slightly from Arial. Regenerating the file from the source with Arial embedded
@@ -348,7 +348,7 @@
                     View PAC Validation Report
                     <span class="sr-only">, PDF/UA accessibility validation report (opens in new tab)</span>
                 </a>
-                <a href="../../index.html#portfolio" class="btn-secondary">
+                <a href="../../#portfolio" class="btn-secondary">
                     &larr; Back to Portfolio
                 </a>
             </div>
